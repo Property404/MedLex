@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) - Dagan Martinez 2015
+# Copyright (c) - 2015 Dagan Martinez
 
 import ecsv
 import os
@@ -23,15 +23,16 @@ for file in files:
 print("\nGetting words")
 words=wordify.getWords(stuff,exclude=wordify.STOP_WORDS+wordify.ALPHABET)
 
-# Organize data
-print("Organizing words")
-counts=wordify.getWordCounts(words)
+# Create lexicon - 75% scrutiny
+lexicon=wordify.associateWords(words,.75)
 
-# Get words from 2D array
+# Make output
 print("Preparing to export")
 output=""
-for word in counts:
-    output+=word[0]+"\n"
+for group in lexicon:
+    for word in group:
+        output+=word+", "
+    output+="\n"
 
 # Export
 print("Exporting")

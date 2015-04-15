@@ -1,4 +1,4 @@
-# Copyright (c) - Dagan Martinez 2015
+# Copyright (c) - 2015 Dagan Martinez
 # This module enables the programmer to easily interact with CSV files
 import csv
 from sys import version_info
@@ -44,7 +44,10 @@ def get_columns_from_grid(grid,columns,individual=False):
     for column in columns:
         inv_result=[]
         for row in grid:
-            inv_result.append(row[column].decode('unicode_escape').encode('ascii','ignore'))
+            if version_info[0]==3:
+                inv_result.append(row[column].encode('ascii','ignore'))
+            else:
+                inv_result.append(row[column].decode('unicode_escape').encode('ascii','ignore'))
         if individual:
             result.append(inv_result)
         else:
