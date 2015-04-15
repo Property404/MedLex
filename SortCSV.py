@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) - Dagan Martinez 2015
+# Copyright (c) - 2015 Dagan Martinez
 # This is a program to manually find desired or relevant columns in a folder of CSV files
 # The user enters "YES"  or "NO" depending on whether the shown text is of any relevance to the use
 
@@ -25,6 +25,11 @@ for file in files:
 
     # Cycle through columns
     for column in columns:
+            # Python3 Fix
+            if os.sys.version_info[0]==3:
+                for i in range(len(column)):
+                    column[i]=str(column[i].decode('unicode_escape'))
+
             # Clear screen
             if os.sys.platform == "win32":
                 os.system("cls")
@@ -33,9 +38,9 @@ for file in files:
 
             # Skip columnif seen before
             if column[0] in usedlist:
-                continue
 
-            # Print out question
+                continue
+            # Print out question FIX FIX FIX FOR PYTHON3
             print("<File "+str(filenumber)+": "+file+">")
             print("<Column "+str(columns.index(column)+1)+": "+column[0]+">")
             print("")
