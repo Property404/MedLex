@@ -1,36 +1,43 @@
+#!/usr/bin/env python
+# Copyright (c) - Dagan Martinez 2015
 # This is a program to manually find desired or relevant columns in a folder of CSV files
 # The user enters "YES"  or "NO" depending on whether the shown text is of any relevance to the use
 
 import ecsv
 import os
 
-# Define variable lists
-searchdir = "./Hospital_Revised_Flatfiles";
-files = os.listdir(searchdir);
-columns = []
-badlist = []
+# Define variable
+searchdir = "./Hospital_Revised_Flatfiles"
+files = os.listdir(searchdir)
+columns = [] # List of columns to iterate through
+usedlist = [] # List of used columns
+goodlist=[] # List of columns to export
+quit_bool = False # Quit - helps to break multiple loops
+filenumber = 0 # Current file number
 
-
-quit_bool = False # for breaking multiple loops
-filenumber = 0
+# Cycle through files
 for file in files:
     filenumber+=1
-    i = 0 # Iterate through columns
-    # assign a grid based on CSV file
+
+    # Create list of columns
     grid = ecsv.make_grid_from_csv(searchdir+"/"+file)
-    while True:
-        try:
-            os.system("cls")
+    columns=ecsv.get_columns_from_grid(grid,range(0,len(grid[0])),individual=True)
 
-            # Get column
-            column = ecsv.get_columns_from_grid(grid,i)
+    # Cycle through columns
+    for column in columns:
+            # Clear screen
+            if os.sys.platform == "win32":
+                os.system("cls")
+            else:
+                os.system("clear")
 
-            # Skip if seen before
-            if column[0] in badlist:
-                i+=1
+            # Skip columnif seen before
+            if column[0] in usedlist:
                 continue
+
             # Print out question
-            print("File "+str(filenumber)+"("+file+") , column "+str(i+1))
+            print("<File "+str(filenumber)+": "+file+">")
+            print("<Column "+str(columns.index(column)+1)+": "+column[0]+">")
             print("")
             if len(column)>1:
                 print('"'+column[1]+'"')
@@ -41,49 +48,60 @@ for file in files:
                         if len(column)>4:
                             print('"'+column[4]+'"')
             else:
-                i+=1
                 continue
-            print('\nDoes this look "of relevance" to you? (Y/N)');
+            print('\nDoes this look "of relevance" to you? (Y/N)')
 
             #Take in input
-            if os.sys.version_info[0]==3:
-                inp = input().upper()
-            else:
-                inp = raw_input().upper()
-            if inp[0] == "Y" or inp[0:4]=="SURE" or inp=="IDC":
-                columns.append(column[0])
-                badlist.append(column[0])
-            elif inp[0] == "N":
-                badlist.append(column[0])
-            elif inp == "QUIT":
-                quit_bool = True
+            inp=""
+            while True:
+                if os.sys.version_info[0]==3:
+                    inp = input().upper()
+                else:
+                    inp = raw_input().upper()
+                if inp[0] == "Y" or inp[0:4]=="SURE" or inp=="IDC":
+                    goodlist.append(column[0])
+                    usedlist.append(column[0])
+                    break
+                elif inp[0] == "N":
+                    usedlist.append(column[0])
+                    break
+                elif inp == "QUIT":
+                    quit_bool = True
+                    break
+                elif inp == "FORFEIT":
+                    exit()
+                else:
+                    print("DID NOT RECOGNIZE COMMAND")
+                    continue
+            if inp=="QUIT":
                 break
-            elif inp == "FORFEIT":
-                exit()
-            else:
-                print("DID NOT RECOGNIZE COMMAND")
-                continue
-            i+=1
-        except Exception as e:
-            print("Exception "+str(e.args)+'\n')
-            print("Loading next file - please be patient")
-            break
+
+    # Calm the user
+    if os.sys.platform == "win32":
+        os.system("cls")
+    else:
+        os.system("clear")
+    print("Loading next file - please wait")
+    print("You may want to get some trail mix")
+
     # Break your rusty chain and run
     if quit_bool:
         print("\nBreaking...")
         break
 
 
-# Export as Python
+# Prepare to export as Python
 print("Exporting...")
 import socket
 import datetime
 export_name = "EXPORTED_COLUMNS.TXT"
-text="# Written by "+__file__+" on "+socket.gethostname()+"("+os.sys.platform+"/"+os.name+")\n# @ "+str(datetime.datetime.now())+"\n# Last file read: "+file+"\n# Files read: "+str(filenumber)+"\n# Columns: "+str(len(columns))+"\n\ndesired_columns=["
+text="# Exported by "+__file__+" on "+socket.gethostname()+"("+os.sys.platform+"/"+os.name+")\n# @ "+str(datetime.datetime.now())+"\n# Last file read: "+file+"\n# Files read: "+str(filenumber)+"\n# Columns: "+str(len(goodlist))+"\n\ndesired_columns=["
+
 # Record list of columns
-for i in columns:
+for i in goodlist:
     text+='"'+i.replace('"','\\"')+'", '
 text=text[0:len(text)-2]+"]"
+
 # Write to file
 exp_file=open(export_name,"w")
 exp_file.write(text)

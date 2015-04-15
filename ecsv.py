@@ -1,7 +1,7 @@
+# Copyright (c) - Dagan Martinez 2015
 # This module enables the programmer to easily interact with CSV files
 import csv
 from sys import version_info
-from unicodedata import normalize
 
 def make_grid_from_csv(filename):
     # Create grid variable
@@ -22,35 +22,34 @@ def make_grid_from_csv(filename):
                 break
     return grid
 
-def get_columns_from_grid(grid,columns):
+def get_columns_from_grid(grid,columns,individual=False):
  #Convert columns argument to list of ints
     if isinstance(columns,int):
         columns=[columns]
     elif isinstance(columns,str):
-        try:
+        if columns in grid[0]:
             columns=[grid[0].index(columns)]
-        except:
+        else:
             columns=[]
     elif isinstance(columns[0],str):
         temp=[]
         for s in columns:
-            try:
-                temp.append(grid[0].index(s))
-            except:
-                pass
+            if s not in grid[0]:
+                continue
+            temp.append(grid[0].index(s))
         columns=temp
 
     # Start finding result
     result=[]
     for column in columns:
-        row=0
-        # Add cells to result until exception in raised
-        while True:
-            try:
-                result.append(str(((grid[row])[column]).decode('UTF-8')))
-                row+=1
-            except:
-                 break
+        inv_result=[]
+        for row in grid:
+            inv_result.append(row[column].decode('unicode_escape').encode('ascii','ignore'))
+        if individual:
+            result.append(inv_result)
+        else:
+            result+=inv_result
+
     # Return items in selected columns
     return result
 
