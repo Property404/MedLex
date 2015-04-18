@@ -3,7 +3,7 @@
 # This is a program to manually find desired or relevant columns in a folder of CSV files
 # The user enters "YES"  or "NO" depending on whether the shown text is of any relevance to the use
 
-import lex.ecsv
+import lex.ecsv as ecsv
 import os
 
 # Define variable
