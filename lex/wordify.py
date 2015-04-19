@@ -6,15 +6,16 @@ import vocabulary
 
 # Lists
 punctuation = "\n\t\r`~!@#$%^&*()-_=+[]\\{}|;':\",./<>?"
-JUNK_WORDS=get_stop_words('en')+[""]+"0 1 2 3 4 5 6 7 8 9 10 50 90 100".split(" ")+list("abcdefghijklmnopqrstuvwxyz")
+JUNK_WORDS=get_stop_words('en')+[""]+list("abcdefghijklmnopqrstuvwxyz")
+DIGITS=list("1234567890")
 COMMON_WORDS=vocabulary.vocab
-print(len(JUNK_WORDS))
+
 # Return a list of words from a list of texts
 def getWords(texts, exclude=[]):
     # Clean up punctuation and all that jazz (HaCha!)
     # By converting the word list to a string
     print("\tCleaning up...")
-    tempstring = ""
+    tempstring=""
     for i in texts:
         # Remove non-ASCII characters
         if sys.version_info[0]==3:
@@ -30,7 +31,7 @@ def getWords(texts, exclude=[]):
     words=[]
     print("\tRemoving excluded items...")
     for i in tempwords:
-        if i.lower() not in exclude:
+        if i.lower() not in exclude and not any(char.isdigit() for char in i):
             words.append(i)
             exclude.append(i)
     return words

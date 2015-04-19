@@ -7,7 +7,7 @@ import lex.ecsv as ecsv
 import os
 
 # Define variable
-searchdir = "./data/Hospital_Revised_Flatfiles"
+searchdir = "./data/Dartmouth_Files" # "./data/Hospital_Revised_Flatfiles"
 files = os.listdir(searchdir)
 columns = [] # List of columns to iterate through
 usedlist = [] # List of used columns
@@ -63,11 +63,11 @@ for file in files:
                     inp = input().upper()
                 else:
                     inp = raw_input().upper()
-                if inp[0] == "Y" or inp[0:4]=="SURE" or inp=="IDC":
+                if len(inp)>0 and inp[0] == "Y":
                     goodlist.append(column[0])
                     usedlist.append(column[0])
                     break
-                elif inp[0] == "N":
+                elif len(inp)>0 and inp[0] == "N":
                     usedlist.append(column[0])
                     break
                 elif inp == "QUIT":

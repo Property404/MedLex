@@ -6,24 +6,30 @@ import os
 import lex.wordify as wordify
 
 #Define variables
+searchdirs=["./data/Dartmouth_Files","./data/Hospital_Revised_Flatfiles"]
 searchdir="./data/Hospital_Revised_Flatfiles"
 columns=["HCAHPS Question","Measure Name","Footnote Text","HCAHPS Answer Description"]
-files=os.listdir(searchdir)
+
 stuff=[]
 it=0 # Iteration control
 
 
 # Pull data from files
-print("Pulling data from files")
-for file in files:
-    stuff+=ecsv.get_columns_from_csv(searchdir+"/"+file,columns)[1::]
-    os.sys.stdout.write("Files: {0} with {1} cells   \r".format(str(it),str(len(stuff))))
-    if it>=400: break
-    it+=1
+for current_dir in searchdirs:
+    print("Pulling data from "+current_dir)
+    files=os.listdir(current_dir)
+    for file in files:
+        grid=ecsv.make_grid_from_csv(current_dir+"/"+file)
+        stuff+=ecsv.get_columns_from_grid(grid,columns)[1::]
+        stuff+=ecsv.get_row_from_grid(grid,0)
+        os.sys.stdout.write("Files: {0} with {1} cells   \r".format(str(it),str(len(stuff))))
+        if it>=158: break
+        it+=1
+    print("")
 
 
 # Get words from data
-print("\nGetting words")
+print("Getting words")
 words=wordify.getWords(stuff, exclude=wordify.JUNK_WORDS+wordify.COMMON_WORDS)
 
 

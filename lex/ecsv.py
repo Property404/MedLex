@@ -55,6 +55,8 @@ def get_columns_from_grid(grid,columns,individual=False):
 
     # Return items in selected columns
     return result
+def get_row_from_grid(grid,row):
+    return grid[row]
 
 def get_columns_from_csv(filename,columns):
     return get_columns_from_grid(make_grid_from_csv(filename),columns)
