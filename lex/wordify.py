@@ -2,11 +2,13 @@
 
 import sys
 from stop_words import get_stop_words
+import vocabulary
 
 # Lists
 punctuation = "\n\t\r`~!@#$%^&*()-_=+[]\\{}|;':\",./<>?"
 JUNK_WORDS=get_stop_words('en')+[""]+"0 1 2 3 4 5 6 7 8 9 10 50 90 100".split(" ")+list("abcdefghijklmnopqrstuvwxyz")
-
+COMMON_WORDS=vocabulary.vocab
+print(len(JUNK_WORDS))
 # Return a list of words from a list of texts
 def getWords(texts, exclude=[]):
     # Clean up punctuation and all that jazz (HaCha!)
