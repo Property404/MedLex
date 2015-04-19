@@ -1,7 +1,7 @@
 # MedLex
 MedLex is a tool designed to take in medical data and create a medical lexion
 
-Tools: 
+Tools:  
 MedLex - Create a medical lexicon  
 SortCSV - Look through columns of CSV files and pick out relevant ones  
 tools/scrape - Python module for scraping a webpage for various file types  
