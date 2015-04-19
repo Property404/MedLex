@@ -6,7 +6,7 @@ import os
 import lex.wordify as wordify
 
 #Define variables
-searchdir="./Hospital_Revised_Flatfiles"
+searchdir="./data/Hospital_Revised_Flatfiles"
 columns=["HCAHPS Question","Measure Name","Footnote Text","HCAHPS Answer Description"]
 files=os.listdir(searchdir)
 stuff=[]
@@ -18,13 +18,13 @@ print("Pulling data from files")
 for file in files:
     stuff+=ecsv.get_columns_from_csv(searchdir+"/"+file,columns)[1::]
     os.sys.stdout.write("Files: {0} with {1} cells   \r".format(str(it),str(len(stuff))))
-    if it>=6: break
+    if it>=400: break
     it+=1
 
 
 # Get words from data
 print("\nGetting words")
-words=wordify.getWords(stuff, exclude=wordify.JUNK_WORDS)
+words=wordify.getWords(stuff, exclude=wordify.JUNK_WORDS+wordify.COMMON_WORDS)
 
 
 # Create lexicon - 75% scrutiny

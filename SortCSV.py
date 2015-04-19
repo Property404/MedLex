@@ -7,7 +7,7 @@ import lex.ecsv as ecsv
 import os
 
 # Define variable
-searchdir = "./Hospital_Revised_Flatfiles"
+searchdir = "./data/Hospital_Revised_Flatfiles"
 files = os.listdir(searchdir)
 columns = [] # List of columns to iterate through
 usedlist = [] # List of used columns
