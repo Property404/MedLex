@@ -11,7 +11,7 @@ searchdir="./data/Hospital_Revised_Flatfiles"
 columns=["HCAHPS Question","Measure Name","Footnote Text","HCAHPS Answer Description"]
 
 stuff=[]
-it=0 # Iteration control
+it=1 # Iteration control
 
 
 # Pull data from files
@@ -23,7 +23,6 @@ for current_dir in searchdirs:
         stuff+=ecsv.get_columns_from_grid(grid,columns)[1::]
         stuff+=ecsv.get_row_from_grid(grid,0)
         os.sys.stdout.write("Files: {0} with {1} cells   \r".format(str(it),str(len(stuff))))
-        if it>=158: break
         it+=1
     print("")
 

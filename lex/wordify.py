@@ -27,7 +27,7 @@ def getWords(texts, exclude=[]):
 
     # Remove duplicates and excluded items
     # Make list of words
-    tempwords=tempstring.split(" ")
+    tempwords=list(set(tempstring.split(" ")))
     words=[]
     print("\tRemoving excluded items...")
     for i in tempwords:
