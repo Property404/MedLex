@@ -4,10 +4,12 @@
 import lex.ecsv as ecsv
 import os
 import lex.wordify as wordify
+import time
+
+starttime=time.time()
 
 #Define variables
 searchdirs=["./data/Dartmouth_Files","./data/Hospital_Revised_Flatfiles"]
-searchdir="./data/Hospital_Revised_Flatfiles"
 columns=["HCAHPS Question","Measure Name","Footnote Text","HCAHPS Answer Description"]
 
 stuff=[]
@@ -51,3 +53,4 @@ for group in lexicon:
 fout=open("lexi.txt","w")
 fout.write(output)
 fout.close()
+print("Time: "+str(time.time()-starttime))

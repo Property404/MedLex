@@ -15,25 +15,23 @@ def getWords(texts, exclude=[]):
     # Clean up punctuation and all that jazz (HaCha!)
     # By converting the word list to a string
     print("\tCleaning up...")
-    tempstring=""
-    for i in texts:
-        # Remove non-ASCII characters
-        if sys.version_info[0]==3:
-            tempstring += str(i.decode('unicode_escape').encode('ascii','ignore')).lower()+" " #Remove non-ASCII characters
-        else:
-            tempstring += i.lower().decode('unicode_escape').encode('ascii','ignore')+" "#Remove non-ASCII characters
+    tempstring=" ".join(texts)
+    if sys.version_info[0]==3:
+        tempstring = str(tempstring.decode('unicode_escape').encode('ascii','ignore')).lower()+" " #Remove non-ASCII characters
+    else:
+        tempstring = tempstring.lower().decode('unicode_escape').encode('ascii','ignore')+" "#Remove non-ASCII characters
     for i in punctuation: tempstring = tempstring.replace(i, " ")
     while tempstring != tempstring.replace("  ", " "): tempstring = tempstring.replace("  ", " ")
 
     # Remove duplicates and excluded items
     # Make list of words
     tempwords=list(set(tempstring.split(" ")))
+    exclude=list(set(exclude))
     words=[]
     print("\tRemoving excluded items...")
     for i in tempwords:
         if i.lower() not in exclude and not any(char.isdigit() for char in i):
             words.append(i)
-            exclude.append(i)
     return words
 
 

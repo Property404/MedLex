@@ -18,7 +18,7 @@ def make_grid_from_csv(filename):
                     grid.append(reader.__next__())
                 else:
                     grid.append(reader.next())
-            except:
+            except StopIteration:
                 break
     return grid
 
