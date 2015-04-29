@@ -1,12 +1,12 @@
 # Copyright (c) - 2015 Dagan Martinez
 
 import sys
-from stop_words import get_stop_words
 import vocabulary
+from nltk.stem.wordnet import WordNetLemmatizer
 
 # Lists
 punctuation = "\n\t\r`~!@#$%^&*()-_=+[]\\{}|;':\",./<>?"
-JUNK_WORDS=get_stop_words('en')+[""]+list("abcdefghijklmnopqrstuvwxyz")
+JUNK_WORDS=[""]
 DIGITS=list("1234567890")
 COMMON_WORDS=vocabulary.vocab
 
@@ -37,19 +37,16 @@ def getWords(texts, exclude=[]):
 
 # compare strings, return percentage
 def str_comp_percentage(str1,str2):
-    # Make sure str1 is the shortest
-    if len(str1)>len(str2):
-        temp=str1
-        str1=str2
-        str2=temp
-    p=0
-    # Compare strings
-    for i in range(len(str1)):
-        if str1[i].lower()==str2[i].lower():
-            p+=1
-        else:
-            break
-    return p/(len(str1)*1.0)
+    lemmatizer = WordNetLemmatizer()
+    if str1.lower() == str2.lower():
+        return 1
+    if str1 == str2:
+        return .98
+    if lemmatizer.lemmatize(str1.lower(),'v') == lemmatizer.lemmatize(str2.lower(),'v'):
+        return .96
+    if lemmatizer.lemmatize(str1.lower(),'n') == lemmatizer.lemmatize(str2.lower(),'n'):
+        return .96
+    return 0
 
 
 # Groups similiar words
@@ -63,4 +60,11 @@ def associateWords(words, per=.75):
                 lexicon[-1].append(i)
         for i in lexicon[-1]:
             words.remove(i)
+        vl=WordNetLemmatizer().lemmatize(lexicon[-1][0].lower(),'v')
+        nl=WordNetLemmatizer().lemmatize(lexicon[-1][0].lower(),'n')
+        if vl not in lexicon[-1]:
+            lexicon[-1].insert(0,vl)
+        elif nl not in lexicon[-1]:
+            if nl not in ["ass"]:
+                lexicon[-1].insert(0,nl)
     return lexicon
