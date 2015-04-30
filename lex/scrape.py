@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Copyright (c) - 2015 Dagan Martinez
 import os
-import bs4
+
 if os.sys.version_info[0] == 3:
     from urllib.request import urlopen
     from urllib.parse import urljoin

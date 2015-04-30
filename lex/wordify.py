@@ -1,14 +1,14 @@
 # Copyright (c) - 2015 Dagan Martinez
 
 import sys
-import vocabulary
+import lex.vocabulary
 from nltk.stem.wordnet import WordNetLemmatizer
 
 # Lists
 punctuation = "\n\t\r`~!@#$%^&*()-_=+[]\\{}|;':\",./<>?"
 JUNK_WORDS=[""]
 DIGITS=list("1234567890")
-COMMON_WORDS=vocabulary.vocab
+COMMON_WORDS=lex.vocabulary.vocab
 
 # Return a list of words from a list of texts
 def getWords(texts, exclude=[]):
