@@ -8,39 +8,38 @@ else:
     from urllib import urlopen
 
 
-
-
-def download_all_data(data_path,temp_path):
+def download_all_data(data_path, temp_path):
+    if temp_path[-1] != "/":
+        temp_path += "/"
+    if data_path[-1] != "/":
+        data_path += "/"
     print("Downloading Hospital_Revised_Flatfiles")
     print("\tDownloading...")
-    flatlines=open(temp_path+"HRF.zip","wb")
-    flatlines.write(urlopen("https://data.medicare.gov/views/bg9k-emty/files/ol-7qtOwDLXwyS6jR48-fPp00gIx-yUN96CT_DfQDZ4?filename=Hospital_Revised_Flatfiles.zip").read())
+    flatlines = open(temp_path+"HRF.zip", "wb")
+    flatlines.write(urlopen("https://data.medicare.gov/views/bg9k-emty/files/ol-7qtOwDLXwyS6jR48-"
+                            "fPp00gIx-yUN96CT_DfQDZ4?filename=Hospital_Revised_Flatfiles.zip").read())
     flatlines.close()
-
 
     # Remove old files
     try:
         shutil.rmtree(data_path+"Hospital_Revised_Flatfiles")
-    except:
+    except NameError:
         pass
 
-
-
-    #Unpack zip file
+    # Unpack zip file
     os.sys.stdout.write("\tUnpacking... 0\r")
-    flatlines=open(temp_path+"HRF.zip","rb")
-    ziplines=zipfile.ZipFile(flatlines)
-    unzip_p=0
-    unzip_max=len(ziplines.namelist())
+    flatlines = open(temp_path+"HRF.zip", "rb")
+    ziplines = zipfile.ZipFile(flatlines)
+    unzip_p = 0
     for name in ziplines.namelist():
-        unzip_p+=1
+        unzip_p += 1
         os.sys.stdout.write("\tUnpacking... "+str(unzip_p)+"\r")
-        ziplines.extract(name,data_path+"Hospital_Revised_Flatfiles")
+        ziplines.extract(name, data_path+"Hospital_Revised_Flatfiles")
     flatlines.close()
     print("")
     os.remove(temp_path+"HRF.zip")
     for i in os.listdir(data_path+"Hospital_Revised_Flatfiles"):
-        if i[-3::]!="csv":
+        if i[-3::] != "csv":
             print("\tRemoving non CSV ("+i+")")
             os.remove(data_path+"Hospital_Revised_Flatfiles/"+i)
 
@@ -49,22 +48,26 @@ def download_all_data(data_path,temp_path):
 
     try:
         shutil.rmtree(data_path+"Dartmouth_Files")
-    except:
+    except NameError:
         pass
     print("\tScraping...")
-    dartmouth_links=get_links_by_type(["xls","xlsx"],"http://www.dartmouthatlas.org/tools/downloads.aspx")
+    dartmouth_links = get_links_by_type(["xls", "xlsx"], "http://www.dartmouthatlas.org/tools/downloads.aspx")
 
-    download_links(dartmouth_links,temp_path+"Dartmouth_Files_TEMP")
+    download_links(dartmouth_links, temp_path+"Dartmouth_Files_TEMP")
 
     if not os.path.exists(data_path+"Dartmouth_Files"):
         os.makedirs(data_path+"Dartmouth_Files")
 
-    print("\tConverting files...")
+    os.sys.stdout.write("\tConverting files...\r")
+    it = 0
     for i in os.listdir(temp_path+"Dartmouth_Files_TEMP"):
-        excel_to_csv(temp_path+"Dartmouth_Files_TEMP/"+i,data_path+"Dartmouth_Files/")
+        it += 1
+        excel_to_csv(temp_path+"Dartmouth_Files_TEMP/"+i, data_path+"Dartmouth_Files/")
+        os.sys.stdout.write("\tConverting files... "+str(it)+"\r")
+    print("")
 
     # Cleaning up
     try:
         shutil.rmtree(temp_path+"Dartmouth_Files_TEMP")
-    except:
+    except NameError:
         pass
