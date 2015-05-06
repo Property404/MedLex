@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Copyright (c) - 2015 Dagan Martinez
 import os
+import bs4
 
 if os.sys.version_info[0] == 3:
     from urllib.request import urlopen
@@ -50,13 +51,5 @@ def download_links(links,directory):
         file.write(urlopen(href).read())
         file.close()
         count+=1
-        os.sys.stdout.write("Downloading... "+str((100*count//(len(links))))+"%\r")
+        os.sys.stdout.write("\tDownloading... "+str((100*count//(len(links))))+"%\r")
     print("")
-
-if __name__=="__main__":
-    filetypes=["xls"]
-    site="http://www.dartmouthatlas.org/tools/downloads.aspx"
-    print("Scraping "+site)
-    links=get_links_by_type(["xls"],"http://www.dartmouthatlas.org/tools/downloads.aspx")
-    download_links(links,"dartmouth_files")
-    print("Finished.")

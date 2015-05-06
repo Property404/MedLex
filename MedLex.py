@@ -12,7 +12,7 @@ def run_medlex(filename="medlex_result.txt"):
     starttime=time.time()
 
     #Define variables
-    searchdirs=["./data/Dartmouth_Files","./data/Hospital_Revised_Flatfiles"]
+    searchdirs=[os.path.dirname(os.path.realpath(__file__))+"/data/Dartmouth_Files",os.path.dirname(os.path.realpath(__file__))+"/data/Hospital_Revised_Flatfiles"]
     columns=["HCAHPS Question","Measure Name","Footnote Text","HCAHPS Answer Description"]
 
     stuff=[]
@@ -29,7 +29,6 @@ def run_medlex(filename="medlex_result.txt"):
             stuff+=ecsv.get_row_from_grid(grid,0)
             os.sys.stdout.write("Files: {0} with {1} cells   \r".format(str(it),str(len(stuff))))
             it+=1
-            if it>100: break
         print("")
 
 
@@ -68,13 +67,13 @@ def run_medlex(filename="medlex_result.txt"):
 #Make MAN page
 MAN_PAGE="""MedLex - Medical Lexicon
 
-usage: medlex [arguments]
-   or: medlex [arguments] [file]
-   or: medlex [arguments] [txtfile] [htmlfile]
+usage: medlex [option]
+   or: medlex [option] [file]
+   or: medlex [option] [txtfile] [htmlfile]
 
-Arguments:
+Options:
    -f\t\tExport formatted dictionary
-   -r\t\tRun MedLex (automatic if no option flags)
+   -r\t\tRun MedLex
    -d\t\tDownload required medical data
    -h\t\tPrint Help (this message) and exit
    -l\t\tPrint license and exit
@@ -96,21 +95,55 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+TRY_HELP="Try 'medlex -h' for more information"
 
 
 # Deal with arguments
 plaintext_filename="medlex_result.txt"
 format_filename="medlex_result.html"
 temp_folder="C:/Users/Dagan/AppData/Local/Temp/"
-argc=len(os.sys.argv)
 argv=os.sys.argv
-flags="-r"
+available_flags="drfhl"
+flags=""
+
+#concat flags
+i=0
+for i in range(len(argv)-1):
+    if argv[i+1][0]=="-":
+        flags+=argv[i+1][1::]
+    else:
+        i-=1
+        break
+
+argv=[argv[0],"-"+flags]+argv[i+2::]
+print(argv)
+argc=len(os.sys.argv)
+
+
+# Check for improper flags
+for i in flags:
+    if i not in available_flags:
+        print ("Unknown option: '"+i+"'")
+        print (TRY_HELP)
+        exit()
+flags=""
+
+
+# Make sure there are arguments
+if argc==1:
+    print ("No arguments")
+    print (TRY_HELP)
+    exit()
+
+
+# Interpret arguments
 if argc>1:
     if argv[1][0]=="-":
         flags=argv[1]
     else:
-        argv.insert(1,flags)
-        argc+=1
+        print("No flags. Please use -d, -r, -f, -h, or -l")
+        print (TRY_HELP)
+        exit()
     if "h" in flags:
         print(MAN_PAGE)
         exit()
@@ -128,14 +161,14 @@ if argc>1:
             format_filename=argv[3]
         if argc>4:
             print("Too many arguments\n")
-            print(MAN_PAGE)
+            print (TRY_HELP)
             exit()
     elif "r" in flags:
         if argc==3:
             plaintext_filename=argv[2]
         elif argc>3:
             print("Too many arguments\n")
-            print(MAN_PAGE)
+            print (TRY_HELP)
             exit()
     if "d" in flags:
         import lex.download_data
