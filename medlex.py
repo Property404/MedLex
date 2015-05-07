@@ -69,7 +69,7 @@ plaintext_filename = get_setting_value("result_default")
 format_filename = get_setting_value("format_default")
 data_destination = get_setting_value("data_destination")
 data_source = get_setting_value("data_source")
-columns = get_setting_value("columns")
+columns = get_setting_value("columns").split(",")
 
 
 temp_folder = tempfile.mkdtemp()+"/"

@@ -10,10 +10,8 @@ def format_lex(ifile, ofile, define=False):
     lextext = open(ifile, "r").read()
     lex = []
     texts = lextext.split("\n")
-    print(texts[0:5])
     for i in texts:
         lex.append(i.split(","))
-    print(lex[0:5])
 
     # Header HTML
     html = """<!DOCTYPE HTML>
