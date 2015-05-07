@@ -16,6 +16,7 @@ Options:
    -f\t\tExport formatted dictionary
    -r\t\tRun MedLex
    -d\t\tDownload required medical data
+   -S\t\tSort through source data
    -h\t\tPrint Help (this message) and exit
    -l\t\tPrint license and exit
 """
@@ -39,19 +40,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 TRY_HELP = "Try 'medlex -h' for more information"
 
-SETTINGS_LOCATION = os.path.dirname(os.path.realpath(__file__))+"/settings.xml"
+SETTINGS_LOCATION = os.path.dirname(os.path.realpath(__file__))+"/settings.txt"
 
-DEFAULT_SETTINGS = """<?xml version="1.0"?>
-<instructions>
+DEFAULT_SETTINGS = """[instructions]
     Change the default variables to customize MedLex.
-</instructions>
-<variables>
-    <result_default>medlex_result.txt</result_default>
-    <format_default>medlex_result.html</format_default>
-    <data_destination>"""+os.path.dirname(os.path.realpath(__file__))+"/data"+"""</data_destination>
-    <data_source>"""+os.path.dirname(os.path.realpath(__file__))+"/data"+"""</data_source>
-    <columns>HCAHPS Question, Measure Name, Footnote Text, HCAHPS Answer Description</columns>
-</variables>
+[/instructions]
+[variables]
+    [result_default]medlex_result.txt[/result_default]
+    [format_default]medlex_result.html[/format_default]
+    [data_destination]"""+os.path.dirname(os.path.realpath(__file__))+"/data"+"""[/data_destination]
+    [data_source]"""+os.path.dirname(os.path.realpath(__file__))+"/data"+"""[/data_source]
+    [columns]HCAHPS Question,Measure Name,Footnote Text,HCAHPS Answer Description[/columns]
+[/variables]
 """
 
 # Deal with settings
@@ -60,8 +60,8 @@ if os.path.isfile(SETTINGS_LOCATION):
 else:
     settings = DEFAULT_SETTINGS
     open(SETTINGS_LOCATION, "w").write(settings)
-get_setting_value = lambda tag_name: settings[settings.index("<"+tag_name+">") +
-                                              len(tag_name)+2:settings.index("</"+tag_name+">")]
+get_setting_value = lambda tag_name: settings[settings.index("["+tag_name+"]") +
+                                              len(tag_name)+2:settings.index("[/"+tag_name+"]")]
 plaintext_filename = get_setting_value("result_default")
 format_filename = get_setting_value("format_default")
 data_destination = get_setting_value("data_destination")
@@ -70,7 +70,7 @@ data_source = get_setting_value("data_source")
 
 temp_folder = tempfile.mkdtemp()+"/"
 argv = os.sys.argv
-available_flags = "drfhl"
+available_flags = "drfhlS"
 flags = ""
 
 
@@ -138,6 +138,14 @@ if argc > 1:
             print("Too many arguments\n")
             print(TRY_HELP)
             exit()
+    if "S" in flags:
+        import lex.sort_csv
+        column_xml = lex.sort_csv.run(data_source)
+        columns = column_xml.split(",")
+        a = settings.index("[columns]")+len("[columns]")
+        b = settings.index("[/columns]")
+        settings = settings[0:a]+column_xml+settings[b::]
+        open(SETTINGS_LOCATION, "w").write(settings)
     if "d" in flags:
         import lex.download_data
         lex.download_data.download_all_data(temp_path=temp_folder, data_path=data_destination)

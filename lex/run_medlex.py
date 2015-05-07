@@ -30,7 +30,7 @@ def run_medlex(filename, searchdir):
     # Create lexicon - 75% scrutiny
     print("Creating lexicon")
     words.sort()
-    lexicon = wordify.associate_words(words, .75)
+    lexicon = wordify.associate_words(words)
 
     # Make output
     print("Exporting")

@@ -38,32 +38,19 @@ def get_words(texts, exclude=[]):
     return words
 
 
-# compare strings, return percentage
-def str_comp_percentage(str1, str2):
-    lemmatizer = WordNetLemmatizer()
-    if str1.lower() == str2.lower():
-        return 1
-    if str1 == str2:
-        return .98
-    if lemmatizer.lemmatize(str1.lower(), 'v') == lemmatizer.lemmatize(str2.lower(), 'v'):
-        return .96
-    if lemmatizer.lemmatize(str1.lower(), 'n') == lemmatizer.lemmatize(str2.lower(), 'n'):
-        return .96
-    return 0
-
-
-# Groups similiar words
-def associate_words(words, per=.75):
+def associate_words(words):
     lexicon = []
     while len(words) != 0:
         lexicon.append([words[0]])
+        vl = WordNetLemmatizer().lemmatize(words[0].lower(), 'v')
+        nl = WordNetLemmatizer().lemmatize(words[0].lower(), 'n')
         for i in words[1::]:
-            if len(i) > 3 and len(words[0]) > 3 and str_comp_percentage(words[0], i) > per:
+            vl2 = WordNetLemmatizer().lemmatize(i.lower(), 'v')
+            nl2 = WordNetLemmatizer().lemmatize(i.lower(), 'n')
+            if i == words[0] or vl2 == vl or nl2 == nl:
                 lexicon[-1].append(i)
         for i in lexicon[-1]:
             words.remove(i)
-        vl = WordNetLemmatizer().lemmatize(lexicon[-1][0].lower(), 'v')
-        nl = WordNetLemmatizer().lemmatize(lexicon[-1][0].lower(), 'n')
         if vl not in lexicon[-1]:
             lexicon[-1].insert(0, vl)
         elif nl not in lexicon[-1]:
