@@ -13,9 +13,10 @@ usage: medlex [option]
    or: medlex [option] [txtfile] [htmlfile]
 
 Options:
-   -f\t\tExport formatted dictionary
    -r\t\tRun MedLex
    -d\t\tDownload required medical data
+   -f\t\tExport formatted dictionary
+   -c\t\tEdit config file
    -S\t\tSort through source data
    -h\t\tPrint Help (this message) and exit
    -l\t\tPrint license and exit
@@ -43,7 +44,9 @@ TRY_HELP = "Try 'medlex -h' for more information"
 SETTINGS_LOCATION = os.path.dirname(os.path.realpath(__file__))+"/settings.txt"
 
 DEFAULT_SETTINGS = """[instructions]
-    Change the default variables to customize MedLex.
+    Change the default variables to customize MedLex.\\
+    White space is NOT ignored.\\
+    You can change the "columns" variable by 'medlex -S'
 [/instructions]
 [variables]
     [result_default]medlex_result.txt[/result_default]
@@ -66,11 +69,12 @@ plaintext_filename = get_setting_value("result_default")
 format_filename = get_setting_value("format_default")
 data_destination = get_setting_value("data_destination")
 data_source = get_setting_value("data_source")
+columns = get_setting_value("columns")
 
 
 temp_folder = tempfile.mkdtemp()+"/"
 argv = os.sys.argv
-available_flags = "drfhlS"
+available_flags = "drfhlSc"
 flags = ""
 
 
@@ -82,9 +86,8 @@ for i in range(len(argv)-1):
     else:
         i -= 1
         break
-
 argv = [argv[0], "-"+flags]+argv[i+2::]
-print(argv)
+# print(argv)
 argc = len(os.sys.argv)
 
 
@@ -111,6 +114,15 @@ if argc > 1:
     else:
         print("No flags. Please use -d, -r, -f, -h, or -l")
         print(TRY_HELP)
+        exit()
+    if "c" in flags:
+        print("Instructions:\n"+get_setting_value("instructions").replace("\n", "").replace("\\", "\n"))
+        if os.sys.platform == "win32":
+            os.system("notepad.exe "+SETTINGS_LOCATION)
+        elif os.sys.platform == "linux" or os.sys.platform == "linux2":
+            os.system('%s %s' % (os.getenv('EDITOR'), SETTINGS_LOCATION))
+        else:
+            os.system("vi "+SETTINGS_LOCATION)
         exit()
     if "h" in flags:
         print(MAN_PAGE)
@@ -152,7 +164,7 @@ if argc > 1:
 
 if "r" in flags:
     import lex.run_medlex
-    lex.run_medlex.run_medlex(filename=plaintext_filename, searchdir=data_source)
+    lex.run_medlex.run(plaintext_filename, data_source, columns)
 
 if "f" in flags:
     import lex.format_lex

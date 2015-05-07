@@ -4,13 +4,11 @@ import time
 import os
 
 
-def run_medlex(filename, searchdir):
+def run(filename, searchdir, columns):
     starttime = time.time()
     print("Pulling from "+searchdir+"...")
 
     # Define variables
-    columns = ["HCAHPS Question", "Measure Name", "Footnote Text", "HCAHPS Answer Description"]
-
     stuff = []
     it = 1  # Iteration control
 

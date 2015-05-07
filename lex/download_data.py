@@ -4,27 +4,36 @@ from lex.scrape import*
 from lex.excel_to_csv import*
 if os.sys.version_info[0] == 3:
     from urllib.request import urlopen
+    from urllib.error import URLError
 else:
-    from urllib import urlopen
+    from urllib2 import urlopen
+    from urllib2 import URLError
 
 
 def download_all_data(data_path, temp_path):
+    # Make sure paths are in proper format
     if temp_path[-1] != "/":
         temp_path += "/"
     if data_path[-1] != "/":
         data_path += "/"
-    print("Downloading Hospital_Revised_Flatfiles")
-    print("\tDownloading...")
-    flatlines = open(temp_path+"HRF.zip", "wb")
-    flatlines.write(urlopen("https://data.medicare.gov/views/bg9k-emty/files/ol-7qtOwDLXwyS6jR48-"
-                            "fPp00gIx-yUN96CT_DfQDZ4?filename=Hospital_Revised_Flatfiles.zip").read())
-    flatlines.close()
 
     # Remove old files
     try:
-        shutil.rmtree(data_path+"Hospital_Revised_Flatfiles")
-    except NameError:
+        shutil.rmtree(data_path)
+    except (NameError, WindowsError):
         pass
+
+    # Downloads
+    print("Downloading Hospital_Revised_Flatfiles")
+    print("\tDownloading...")
+    flatlines = open(temp_path+"HRF.zip", "wb")
+    try:
+        flatlines.write(urlopen("https://data.medicare.gov/views/bg9k-emty/files/ol-7qtOwDLXwyS6jR48-"
+                                "fPp00gIx-yUN96CT_DfQDZ4?filename=Hospital_Revised_Flatfiles.zip").read())
+    except URLError:
+        print("URLError.\nPlease check your network connection.")
+        exit()
+    flatlines.close()
 
     # Unpack zip file
     os.sys.stdout.write("\tUnpacking... 0\r")
@@ -46,18 +55,18 @@ def download_all_data(data_path, temp_path):
     # Download Dartmouth Files
     print("Downloading Dartmouth Files")
 
-    try:
-        shutil.rmtree(data_path+"Dartmouth_Files")
-    except NameError:
-        pass
+    # Get and download links to TEMP
     print("\tScraping...")
-    dartmouth_links = get_links_by_type(["xls", "xlsx"], "http://www.dartmouthatlas.org/tools/downloads.aspx")
+    try:
+        dartmouth_links = get_links_by_type(["xls", "xlsx"], "http://www.dartmouthatlas.org/tools/downloads.aspx")
+        download_links(dartmouth_links, temp_path+"Dartmouth_Files_TEMP")
+    except URLError:
+        print("URLError.\nPlease check your network connection.")
+        exit()
 
-    download_links(dartmouth_links, temp_path+"Dartmouth_Files_TEMP")
-
+    # Convert files and place in new folder
     if not os.path.exists(data_path+"Dartmouth_Files"):
         os.makedirs(data_path+"Dartmouth_Files")
-
     os.sys.stdout.write("\tConverting files...\r")
     it = 0
     for i in os.listdir(temp_path+"Dartmouth_Files_TEMP"):
@@ -66,8 +75,4 @@ def download_all_data(data_path, temp_path):
         os.sys.stdout.write("\tConverting files... "+str(it)+"\r")
     print("")
 
-    # Cleaning up
-    try:
-        shutil.rmtree(temp_path+"Dartmouth_Files_TEMP")
-    except NameError:
-        pass
+    # Don't need to clean up. Medlex should do that from main

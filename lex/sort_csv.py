@@ -62,15 +62,15 @@ def run(searchdir):
                 # Take in input
                 inp = ""
                 while True:
-                    if os.sys.version_info[0]==3:
+                    if os.sys.version_info[0] == 3:
                         inp = input().upper()
                     else:
                         inp = raw_input().upper()
-                    if len(inp)>0 and inp[0] == "Y":
+                    if len(inp) > 0 and inp[0] == "Y":
                         goodlist.append(column[0])
                         usedlist.append(column[0])
                         break
-                    elif len(inp)>0 and inp[0] == "N":
+                    elif len(inp) > 0 and inp[0] == "N":
                         usedlist.append(column[0])
                         break
                     elif inp == "QUIT":
@@ -81,7 +81,7 @@ def run(searchdir):
                     else:
                         print("DID NOT RECOGNIZE COMMAND")
                         continue
-                if inp=="QUIT":
+                if inp == "QUIT":
                     break
 
         # Calm the user
@@ -100,5 +100,5 @@ def run(searchdir):
     # Record list of columns
     result = ""
     for i in goodlist:
-        result += i.replace(',', '\\,')+'",'
+        result += i.replace(',', '\\,')+','
     return result
