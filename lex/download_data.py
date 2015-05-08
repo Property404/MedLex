@@ -20,7 +20,7 @@ def download_all_data(data_path, temp_path):
     # Remove old files
     try:
         shutil.rmtree(data_path)
-    except (NameError, WindowsError):
+    except OSError:
         pass
 
     # Downloads

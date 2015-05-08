@@ -88,6 +88,7 @@ def format_lex(ifile, ofile, define=False):
     """
 
     # Export
+    print("")
     html = str(u''.join([k if ord(k) < 128 else '' for k in html]))
     f = open(ofile, "w")
     f.write(html)

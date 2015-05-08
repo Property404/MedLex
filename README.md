@@ -21,8 +21,8 @@ MedLex is a tool designed to take in medical data and create a medical lexion
 **Installation Instructions:**
 
 * [Download](https://github.com/Property404/MedLex/archive/master.zip) and extract
-* Install all needed packages through [pip](https://pypi.python.org/pypi/pip)
-* run nltk.download() in python terminal
+* Install all needed packages through [pip](https://pypi.python.org/pypi/pip) if not installed
+* run nltk.download() in python shell if needed
 * Optional: Set environmental path variable to include MedLex directory (and Python directory)
 * Optional for \*NIX: Type in MedLex directory:
   * mv medlex.py medlex
