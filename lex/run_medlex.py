@@ -5,7 +5,6 @@ import os
 
 
 def run(filename, searchdir, columns):
-    starttime = time.time()
     print("Pulling from "+searchdir+"...")
 
     # Define variables
@@ -46,4 +45,3 @@ def run(filename, searchdir, columns):
     fout = open(filename, "w+")
     fout.write(output)
     fout.close()
-    print("Time: "+str(time.time()-starttime))

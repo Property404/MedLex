@@ -73,13 +73,20 @@ def run(searchdir):
                     elif len(inp) > 0 and inp[0] == "N":
                         usedlist.append(column[0])
                         break
-                    elif inp == "QUIT":
+                    elif len(inp) > 0 and inp[0] == "H":
+                        print("""YES - add column to list
+                        NO - skip column
+                        DONE - Save and exit
+                        FORFEIT - Give up and exit
+                        HELP - Display this message""")
+                        break
+                    elif inp == "DONE":
                         quit_bool = True
                         break
                     elif inp == "FORFEIT":
                         exit()
                     else:
-                        print("DID NOT RECOGNIZE COMMAND")
+                        print("DID NOT RECOGNIZE COMMAND\nTYPE 'HELP' FOR LIST OF COMMANDS")
                         continue
                 if inp == "QUIT":
                     break
@@ -90,7 +97,7 @@ def run(searchdir):
         else:
             os.system("clear")
         print("Loading next file - please wait")
-        print("You may want to get some trail mix")
+        print("If it's a big file, you may want to get some trail mix")
 
         # Break your rusty chain and run
         if quit_bool:

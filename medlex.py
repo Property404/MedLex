@@ -13,9 +13,10 @@ usage: medlex [option]
    or: medlex [option] [txtfile] [htmlfile]
 
 Options:
-   -r\t\tRun MedLex
+   -r\t\tMake lexicon
    -d\t\tDownload required medical data
-   -f\t\tExport formatted dictionary
+   -f\t\tFormat lexicon
+   -F\t\tFormat lexicon with dictionary definitions
    -c\t\tEdit config file
    -S\t\tSort through source data
    -h\t\tPrint Help (this message) and exit
@@ -74,7 +75,7 @@ columns = get_setting_value("columns").split(",")
 
 temp_folder = tempfile.mkdtemp()+"/"
 argv = os.sys.argv
-available_flags = "drfhlSc"
+available_flags = "drfhlScF"
 flags = ""
 
 
@@ -118,11 +119,12 @@ if argc > 1:
     if "c" in flags:
         print("Instructions:\n"+get_setting_value("instructions").replace("\n", "").replace("\\", "\n"))
         if os.sys.platform == "win32":
-            os.system("notepad.exe "+SETTINGS_LOCATION)
-        elif os.sys.platform == "linux" or os.sys.platform == "linux2":
-            os.system('%s %s' % (os.getenv('EDITOR'), SETTINGS_LOCATION))
+            os.system("notepad "+SETTINGS_LOCATION)
         else:
-            os.system("vi "+SETTINGS_LOCATION)
+            if os.system("nano "+SETTINGS_LOCATION):
+                if os.system("vi "+SETTINGS_LOCATION):
+                    if os.system("vim "+SETTINGS_LOCATION):
+                                print("Couldn't find editor")
         exit()
     if "h" in flags:
         print(MAN_PAGE)
@@ -130,7 +132,7 @@ if argc > 1:
     if "l" in flags:
         print(LICENSE_PAGE)
         exit()
-    if "f" in flags:
+    if "f" in flags or "F" in flags:
         if argc >= 2:
             if "r" in flags:
                 plaintext_filename = temp_folder+plaintext_filename
@@ -165,6 +167,10 @@ if argc > 1:
 if "r" in flags:
     import lex.run_medlex
     lex.run_medlex.run(plaintext_filename, data_source, columns)
+
+if "F" in flags:
+    import lex.format_lex
+    lex.format_lex.format_lex(plaintext_filename, format_filename, True)
 
 if "f" in flags:
     import lex.format_lex
