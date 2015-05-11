@@ -1,6 +1,5 @@
 import lex.ecsv as ecsv
 import lex.wordify as wordify
-import time
 import os
 
 

@@ -19,6 +19,7 @@ Options:
    -F\t\tFormat lexicon with dictionary definitions
    -c\t\tEdit config file
    -S\t\tSort through source data
+   -C\t\tImport all modules
    -h\t\tPrint Help (this message) and exit
    -l\t\tPrint license and exit
 """
@@ -75,7 +76,7 @@ columns = get_setting_value("columns").split(",")
 
 temp_folder = tempfile.mkdtemp()+"/"
 argv = os.sys.argv
-available_flags = "drfhlScF"
+available_flags = "drfhlScCF"
 flags = ""
 
 
@@ -113,9 +114,13 @@ if argc > 1:
     if argv[1][0] == "-":
         flags = argv[1]
     else:
-        print("No flags. Please use -d, -r, -f, -h, or -l")
         print(TRY_HELP)
         exit()
+    if "C" in flags:
+        import lex.download_data
+        import lex.run_medlex
+        import lex.format_lex
+        import lex.sort_csv
     if "c" in flags:
         print("Instructions:\n"+get_setting_value("instructions").replace("\n", "").replace("\\", "\n"))
         if os.sys.platform == "win32":
