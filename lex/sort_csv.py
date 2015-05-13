@@ -74,12 +74,13 @@ def run(searchdir):
                         usedlist.append(column[0])
                         break
                     elif len(inp) > 0 and inp[0] == "H":
-                        print("""YES - add column to list
-                        NO - skip column
-                        DONE - Save and exit
-                        FORFEIT - Give up and exit
-                        HELP - Display this message""")
-                        break
+                        print("""COMMANDS:
+    YES - add column to list
+    NO - skip column
+    DONE - Save and exit
+    FORFEIT - Give up and exit
+    HELP - Display this message""")
+                        continue
                     elif inp == "DONE":
                         quit_bool = True
                         break
@@ -88,8 +89,12 @@ def run(searchdir):
                     else:
                         print("DID NOT RECOGNIZE COMMAND\nTYPE 'HELP' FOR LIST OF COMMANDS")
                         continue
-                if inp == "QUIT":
+                if quit_bool:
                     break
+        # Break your rusty chain and run
+        if quit_bool:
+            print("\nBreaking and exporting...")
+            break
 
         # Calm the user
         if os.sys.platform == "win32":
@@ -99,13 +104,5 @@ def run(searchdir):
         print("Loading next file - please wait")
         print("If it's a big file, you may want to get some trail mix")
 
-        # Break your rusty chain and run
-        if quit_bool:
-            print("\nBreaking...")
-            break
-
     # Record list of columns
-    result = ""
-    for i in goodlist:
-        result += i.replace(',', '\\,')+','
-    return result
+    return str(goodlist)
