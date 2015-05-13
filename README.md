@@ -1,14 +1,15 @@
 # MedLex
-MedLex is a tool designed to take in medical data and create a medical lexion
+MedLex is a tool designed to take in CSV data and create a lexicon
   
 **Modules used by MedLex:**
 
-* lex/download_data - Downloads data associated with MedLex  
+* lex/download_data - Download Medlex sample data
 * lex/ecsv - Easy csv manipulation  
-* lex/excel_to_csv - Converts Excel files to CSV  
-* lex/format_lex - Beautifies the lexicon as well as adds dictionary definitions  
-* lex/run_medlex - Create a medical lexicon  
-* lex/scrape - Scrapes webpages  
+* lex/excel_to_csv - Convert Excel files to CSV  
+* lex/format_lex - Beautify the lexicon as well as adds dictionary definitions  
+* lex/run_medlex - Create a lexicon  
+* lex/scrape - Scrape webpages  
+* lex/upload_data - Upload files
 * lex/vocabulary - List of the 4500 most common English words  
 * lex/wordify - Word manpulation  
   
