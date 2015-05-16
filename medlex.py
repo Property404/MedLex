@@ -6,9 +6,9 @@ import tempfile
 
 
 # CONSTANTS
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
-MAN_PAGE = """MedLex
+HELP_PAGE = """MedLex
 
 usage: medlex [option]
    or: medlex [option] [file]
@@ -20,47 +20,36 @@ Options:
    -f\t\tFormat lexicon
    -F\t\tFormat lexicon with dictionary definitions
    -c\t\tEdit config file
-   -S\t\tSort through source data
+   -S\t\tManually sort through source data
+   -Z\t\tAutosort through source data
    -src <dir>\tUse source path
    -title <str>\tUse title in formatted lexicon
-   -upload\tUpload files
-   -v\t\tDisplay version number
+   -u <f> <dir>\tUpload file
+   -upload\tSame as -u
    -h\t\tPrint Help (this message) and exit
-   -l\t\tPrint license and exit
+   --version\tDisplay version number and exit
+   --license\tPrint license and exit
+   --help\tSame as -h
 """
-SECRET_MAN_PAGE = """MedLex
+SECRET_HELP_PAGE = """MedLex
 Super Secret Help (shh!)
 
 Secret Options:
-
-    -C\t\tImport all modules in lex
+    -i\t\tImport all modules in lex
+    -L <n>\tLimit files taken into lexicon
+    --limit\tSame as -L
     -H\t\tDisplay Secret Help (this message) and exit
 """
 
-LICENSE_PAGE = """GPL License
-Copyright (c) - 2015 Dagan Martinez
+TRY_HELP = "Try 'medlex --help' for more information"
+TRY_SECRET_HELP = "Try 'medlex -H' for more information"
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-
-TRY_HELP = "Try 'medlex -h' for more information"
-
+LICENSE_LOCATION = os.path.dirname(os.path.realpath(__file__))+"/License"
 SETTINGS_LOCATION = os.path.dirname(os.path.realpath(__file__))+"/config.py"
 
 DEFAULT_SETTINGS = """\"\"\"Instructions:
     Change the default variables to customize MedLex.
-    You can change the "columns" variable by 'medlex -S'
+    You can change the "columns" variable by 'medlex -S' or 'medlex -Z'
 \"\"\"
 
 # Variables
@@ -82,13 +71,12 @@ data_destination = config.data_destination
 data_source = config.data_source
 columns = config.columns
 format_title = config.format_title
-upload_source = None
-upload_destination = None
-
+upload_queue = []
+limit = 0
 
 temp_folder = tempfile.mkdtemp()+"/"
 argv = []
-available_flags = "vdrfhlScCFH"
+available_flags = "vdrfhlSZciFH"
 flags = ""
 
 
@@ -100,10 +88,27 @@ for i in range(len(os.sys.argv)):
     if skip_iter > 0:
         skip_iter -= 1
         continue
-    if os.sys.argv[i] == '-upload':
+    if os.sys.argv[i] == '--help':
+        print(HELP_PAGE)
+        exit()
+    if os.sys.argv[i] == '--version':
+        print("MedLex "+VERSION+" on Python "+".".join(str(a) for a in os.sys.version_info[0:3]))
+        exit()
+    if os.sys.argv[i] == '--license':
+        print(open(LICENSE_LOCATION, 'r').read())
+        exit()
+    if os.sys.argv[i] == '-limit' or os.sys.argv[i] == '-L':
+        if len(os.sys.argv) > i+1:
+            limit = int(os.sys.argv[i+1])
+            skip_iter = 1
+            continue
+        else:
+            print("Must give file limit")
+            print(TRY_SECRET_HELP)
+            exit()
+    if os.sys.argv[i] == '-upload' or os.sys.argv[i] == '-u':
         if len(os.sys.argv) > i+2:
-            upload_source = os.sys.argv[i+1]
-            upload_destination = os.sys.argv[i+2]
+            upload_queue.append([os.sys.argv[i+1], os.sys.argv[i+2]])
             skip_iter = 2
             continue
         else:
@@ -159,7 +164,7 @@ if argc > 1:
     else:
         print(TRY_HELP)
         exit()
-    if "C" in flags:
+    if "i" in flags:
         import lex.download_data
         import lex.run_medlex
         import lex.format_lex
@@ -175,16 +180,11 @@ if argc > 1:
                                 print("Couldn't find editor")
         exit()
     if "h" in flags:
-        print(MAN_PAGE)
+        print(HELP_PAGE)
         exit()
     if "H" in flags:
-        print(SECRET_MAN_PAGE)
+        print(SECRET_HELP_PAGE)
         exit()
-    if "l" in flags:
-        print(LICENSE_PAGE)
-        exit()
-    if "v" in flags:
-        print("MedLex "+VERSION+" on Python "+".".join(str(a) for a in os.sys.version_info[0:3]))
     if "f" in flags or "F" in flags:
         if argc >= 2:
             if "r" in flags:
@@ -205,10 +205,13 @@ if argc > 1:
             print("Too many arguments\n")
             print(TRY_HELP)
             exit()
-    if "S" in flags:
+    if "d" in flags:
+        import lex.download_data
+        lex.download_data.download_all_data(temp_path=temp_folder, data_path=data_destination)
+    if "S" in flags or "Z" in flags:
         # Get columns
         import lex.sort_csv
-        column_var = lex.sort_csv.run(data_source)
+        column_var = lex.sort_csv.run(data_source, limit, "Z" in flags)
         # Find and replace
         settings = open(SETTINGS_LOCATION, "r").read()
         a = settings.index("\ncolumns =")+len("\ncolumns =")
@@ -222,15 +225,13 @@ if argc > 1:
         # Reload settings
         if os.sys.version_info[0] >= 3:
             from importlib import reload
-            reload("config")
+            reload(config)
         print("Done")
-    if "d" in flags:
-        import lex.download_data
-        lex.download_data.download_all_data(temp_path=temp_folder, data_path=data_destination)
+
 
 if "r" in flags:
     import lex.run_medlex
-    lex.run_medlex.run(plaintext_filename, data_source, columns)
+    lex.run_medlex.run(plaintext_filename, data_source, columns, limit)
 
 if "F" in flags:
     import lex.format_lex
@@ -240,8 +241,11 @@ if "f" in flags:
     import lex.format_lex
     lex.format_lex.format_lex(plaintext_filename, format_filename, False, format_title)
 
-if upload_source is not None:
+if upload_queue is not []:
     from lex.upload_data import upload
-    upload(upload_source, upload_destination)
+    for upload_data in upload_queue:
+        destinations = upload_data[1].split(";")
+        for path in destinations:
+            upload(upload_data[0], path)
 
 shutil.rmtree(temp_folder)

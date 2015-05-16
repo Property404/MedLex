@@ -3,7 +3,7 @@ import lex.wordify as wordify
 import os
 
 
-def run(filename, searchdir, columns):
+def run(filename, searchdir, columns, limit):
     print("Pulling from "+searchdir+"...")
 
     # Define variables
@@ -17,6 +17,8 @@ def run(filename, searchdir, columns):
                 stuff += ecsv.get_columns_from_grid(grid, columns)[1::]
                 stuff += ecsv.get_row_from_grid(grid, 0)
                 os.sys.stdout.write("\tFiles: {0} with {1} cells   \r".format(str(it), str(len(stuff))))
+                if it == limit:
+                    break
                 it += 1
 
     # Get words from data

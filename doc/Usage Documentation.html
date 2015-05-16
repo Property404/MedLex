@@ -29,7 +29,8 @@ lexicon by using the &quot;<code>-f</code>&quot; flag:
 Where "lexicon.txt" is the name of a plain-text lexicon we previously created, and "formatted_lexicon.html" is the<br>
 formatted version we are creating. To create a plain-text lexicon and formatted lexicon at the same time, we do:
 <p><code>medlex -rf lexicon.txt formatted_lexicon.html</code></p>
-Where "lexicon.txt" and "formatted_lexicon.html" are both files we are creating. To <em>only</em> create a formatted lexicon,<br/>we can remove the first filename, like so:
+Where "lexicon.txt" and "formatted_lexicon.html" are both files we are creating. To <em>only</em> create a formatted lexicon,<br/>
+we can remove the first file name, like so:
 <p><code>medlex -rf formatted_lexicon.html</code></p>
 This will assign the plain-text lexicon to a temp folder, to be deleted.
 <p>As a test feature, MedLex also allows you add definitions to lexicon by using the &quot;<code>F</code>&quot;
@@ -43,8 +44,8 @@ The &quot;<code>title</code>&quot; option allows us to alter the title of the ou
 A user can add a custom data source using the &quot;<code>src</code>&quot; option:
 <p><code>medlex -r Financial_Lexicon.txt -src &quot;~/financial_data&quot;</code></p>
 However, MedLex will still search through the columns used with the sample data. To fix this, the user can run SortCSV<br>
-and manually go through and pick out desired columns:
-<p><code>medlex -S -src &quot;~/financial_data&quot;<br>
+to manually("<code>S</code>") or automatically("<code>Z</code>") pick out desired columns:
+<p><code>medlex -Z -src &quot;~/financial_data&quot;<br>
 medlex -rf Financial_lexicon.html -title &quot;Financial Lexicon&quot; -src &quot;~/financial_data&quot;</code>
 </p>
 <strong>Note Bene</strong>: the source folder must contain only CSV files
@@ -54,15 +55,19 @@ Medlex can be customized by using the &quot;<code>c</code>&quot; flag:
 This will open the <code>config.py</code> file, which holds the default variables for MedLex
 
 <h2>Uploading Files</h2>
-Files can be uploaded to Dropbox or Google Drive by using the &quot;<code>upload</code>&quot; option:
-<p><code>medlex -upload lexicon.txt dropbox:lexicon_example.txt</code><br/>
-<code>medlex -upload lexicon.txt drive.google:lexicon_example.txt</code></p>
+Files can be uploaded to Dropbox, Google Drive, or an FTP server by using the &quot;<code>upload</code>&quot; or &quot;<code>u</code>&quot; options:
+<p><code>medlex -upload lexicon.txt dropbox:lexicon.txt</code><br/>
+<code>medlex -u lexicon.txt drive.google:lexicon.txt</code><br />
+<code>medlex -u lexicon.txt ftp://127.0.0.1</code></p>
+or
+<p><code>medlex -u lexicon.txt dropbox:lexicon.txt;drive.google:lexicon.txt;ftp://127.0.0.1</code></p>
 This can also be done after creating a lexicon:
-<p><code>medlex -r lex.txt -upload lex.txt dropbox:lex.txt</code></p>
+<p><code>medlex -r lex.txt -u lex.txt ftp://127.0.0.1/uploaded_lex.txt</code></p>
+
 
 <h2>Additional Help</h2>
 Additional help can be found in the <code>README.md</code> file or through:
-<p><code>medlex -h</code></p>
+<p><code>medlex --help</code></p>
 MedLex is free software under version 3 of the GNU General Public License
 </body>
 </html>

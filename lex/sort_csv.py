@@ -7,7 +7,10 @@ import lex.ecsv as ecsv
 import os
 
 
-def run(searchdir):
+def run(searchdir, limit, automatic=False):
+    # Import extra stuff
+    if automatic:
+        import lex.vocabulary
     # Define variable
     files = []
     for root, sub, docs in os.walk(searchdir):
@@ -28,44 +31,51 @@ def run(searchdir):
 
         # Cycle through columns
         for column in columns:
-                # Python3 Fix
-                if os.sys.version_info[0] == 3:
-                    for i in range(len(column)):
-                        column[i] = str(column[i].decode('unicode_escape'))
 
                 # Clear screen
-                if os.sys.platform == "win32":
-                    os.system("cls")
-                else:
-                    os.system("clear")
+                if not automatic:
+                    if os.sys.platform == "win32":
+                        os.system("cls")
+                    else:
+                        os.system("clear")
 
                 # Skip columnif seen before
                 if column[0] in usedlist:
 
                     continue
-                # Print out question FIX FIX FIX FOR PYTHON3
+                # Print out question
                 print("<File "+str(filenumber)+": "+file+">")
                 print("<Column "+str(columns.index(column)+1)+": "+column[0]+">")
                 print("")
+                first_column = ""
                 if len(column) > 1:
                     print('"'+column[1]+'"')
+                    first_column = column[1]
+                else:
+                    continue
+                if not automatic:
                     if len(column) > 2:
                         print('"'+column[2]+'"')
                         if len(column) > 3:
                             print('"'+column[3]+'"')
                             if len(column) > 4:
                                 print('"'+column[4]+'"')
-                else:
-                    continue
-                print('\nDoes this look "of relevance" to you? (Y/N)')
+                    print('\nDoes this look "of relevance" to you? (Y/N)')
 
                 # Take in input
-                inp = ""
                 while True:
-                    if os.sys.version_info[0] == 3:
-                        inp = input().upper()
+                    if automatic:
+                        inp = "N"
+                        for i in lex.vocabulary.vocab:
+                            if i in first_column.split(" "):
+                                inp = "Y"
+                                break
+                        print(inp)
                     else:
-                        inp = raw_input().upper()
+                        if os.sys.version_info[0] >= 3:
+                            inp = input().upper()
+                        else:
+                            inp = raw_input().upper()
                     if len(inp) > 0 and inp[0] == "Y":
                         goodlist.append(column[0])
                         usedlist.append(column[0])
@@ -92,17 +102,18 @@ def run(searchdir):
                 if quit_bool:
                     break
         # Break your rusty chain and run
-        if quit_bool:
+        if quit_bool or filenumber == limit:
             print("\nBreaking and exporting...")
             break
 
         # Calm the user
-        if os.sys.platform == "win32":
-            os.system("cls")
-        else:
-            os.system("clear")
-        print("Loading next file - please wait")
-        print("If it's a big file, you may want to get some trail mix")
+        if not automatic:
+            if os.sys.platform == "win32":
+                os.system("cls")
+            else:
+                os.system("clear")
+            print("Loading next file - please wait")
+            print("If it's a big file, you may want to get some trail mix")
 
     # Record list of columns
     return str(goodlist)

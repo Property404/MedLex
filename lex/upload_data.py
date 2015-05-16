@@ -13,12 +13,12 @@ def upload_to_dropbox(filename, new_filename, app_key=DROPBOX_APP_KEY, app_secre
     try:
         import dropbox
     except ImportError:
-        print("Dropbox python module not installed\nTry:\tpip install dropbox")
+        print("Dropbox Python API not installed\nTry:\tpip install dropbox")
         exit()
     flow = dropbox.client.DropboxOAuth2FlowNoRedirect(app_key, app_secret)
     authorize_url = flow.start()
     webbrowser.open(authorize_url)
-    code = input("Enter DropBox authorization code> ")
+    code = input("Enter DropBox authorization code>")
     try:
         access_token, user_id = flow.finish(code)
     except dropbox.rest.ErrorResponse:
@@ -33,12 +33,15 @@ def upload_to_dropbox(filename, new_filename, app_key=DROPBOX_APP_KEY, app_secre
 
 
 def upload_to_drive(filename, new_filename, app_key=DRIVE_APP_KEY, app_secret=DRIVE_APP_SECRET):
-    import httplib2
-    import pprint
-    from apiclient.discovery import build
-    from apiclient.http import MediaFileUpload
-    from oauth2client.client import OAuth2WebServerFlow
-    from oauth2client.client import FlowExchangeError
+    try:
+        import httplib2
+        from apiclient.discovery import build
+        from apiclient.http import MediaFileUpload
+        from oauth2client.client import OAuth2WebServerFlow
+        from oauth2client.client import FlowExchangeError
+    except ImportError:
+        print("Google API Python Client not installed\nTry:\tpip install --upgrade google-api-python-client")
+        exit()
 
     oauth_scope = 'https://www.googleapis.com/auth/drive'
     redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
@@ -47,7 +50,7 @@ def upload_to_drive(filename, new_filename, app_key=DRIVE_APP_KEY, app_secret=DR
                                redirect_uri=redirect_uri)
     authorize_url = flow.step1_get_authorize_url()
     webbrowser.open(authorize_url)
-    code = input("Enter Google Drive authorization code> ")
+    code = input("Enter Google Drive authorization code>")
     try:
         credentials = flow.step2_exchange(code)
     except FlowExchangeError:
@@ -62,7 +65,7 @@ def upload_to_drive(filename, new_filename, app_key=DRIVE_APP_KEY, app_secret=DR
     media_body = MediaFileUpload(filename, mimetype='text/plain', resumable=True)
     body = {
         'title': new_filename,
-        'description': 'MedLex uploaded doc',
+        'description': 'Uploaded by MedLex',
         'mimeType': 'text/plain'
     }
     drive_service.files().insert(body=body, media_body=media_body).execute()
@@ -70,12 +73,57 @@ def upload_to_drive(filename, new_filename, app_key=DRIVE_APP_KEY, app_secret=DR
     return True
 
 
-def upload(filename, destination):
+def upload_by_ftp(src, destination):
+    from os.path import basename
+    import ftplib
+
+    # Get information from destination string
+    while destination[0] == '/':
+        destination = destination[1::]
+    if "/" in destination:
+        ftp_base = destination[0:destination.index('/')]
+        ftp_rest = destination[destination.index('/')::]
+        if "." in ftp_rest:
+            ftp_path = ftp_rest[0:len(ftp_rest)-ftp_rest[::-1].index('/')]
+            ftp_filename = ftp_rest[len(ftp_rest)-ftp_rest[::-1].index('/')::]
+        else:
+            ftp_path = ftp_rest
+            ftp_filename = basename(src)
+    else:
+        ftp_base = destination
+        ftp_path = "."
+        ftp_filename = basename(src)
+
+    # Start FTP session
+    try:
+        session = ftplib.FTP(ftp_base, input("Username>"), input("Password>"))
+        session.cwd(ftp_path)
+        srcfile = open(src, "rb")
+        session.storbinary("STOR "+ftp_filename, srcfile)
+    except ftplib.error_perm as e:
+        print("File transfer failed: "+e.args[0])
+        return False
+    except (FileNotFoundError, PermissionError) as e:
+        print("File transfer failed(client): "+e.args[1])
+        return False
+    srcfile.close()
+    session.quit()
+    print("File transfer successful")
+    return True
+
+
+def upload(src, destination):
+    # Upload to Google Drive
     if len(destination) > len("drive.google:") and destination[0:len("drive.google:")] == "drive.google:":
-        upload_to_drive(filename, destination[len("drive.google:")::])
+        upload_to_drive(src, destination[len("drive.google:")::])
+    # Upload to Dropbox
     elif len(destination) > len("dropbox:") and destination[0:len("dropbox:")] == "dropbox:":
-        upload_to_dropbox(filename, destination[len("dropbox:")::])
+        upload_to_dropbox(src, destination[len("dropbox:")::])
+    # Upload to server by FTP
+    elif len(destination) > len("ftp:") and destination[0:len("ftp:")] == "ftp:":
+        upload_by_ftp(src, destination[len("ftp:")::])
+    # Copy to local directory
     else:
         from shutil import copyfile
-        copyfile(filename, destination)
-        print("Uploaded "+filename+" to local destination")
+        copyfile(src, destination)
+        print("Uploaded "+src+" to local destination")

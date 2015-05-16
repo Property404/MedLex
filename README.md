@@ -3,15 +3,15 @@ MedLex is a tool designed to take in CSV data and create a lexicon
   
 **Modules used by MedLex:**
 
-* lex/download_data - Download Medlex sample data
-* lex/ecsv - Easy csv manipulation  
-* lex/excel_to_csv - Convert Excel files to CSV  
-* lex/format_lex - Beautify the lexicon as well as adds dictionary definitions  
+* lex/download_data - Download sample data
+* lex/ecsv - Easy csv reading
+* lex/excel_to_csv - Convert Excel files to CSV files
+* lex/format_lex - Format a lexicon as HTML
 * lex/run_medlex - Create a lexicon  
 * lex/scrape - Scrape webpages  
 * lex/upload_data - Upload files
 * lex/vocabulary - List of the 4500 most common English words  
-* lex/wordify - Word manpulation  
+* lex/wordify - Word manipulation  
   
 **Packages needed:**
 
@@ -33,6 +33,7 @@ MedLex is a tool designed to take in CSV data and create a lexicon
 
 **Usage Instructions:**  
 
-* For usage help, run 'medlex -h'
-* If MedLex won't run properly, try [updating Python](https://www.python.org/)
+* For usage help, open doc/Usage Documentation.html
+* For additional help, type 'medlex -h'
+* If MedLex won't run properly, try [updating Python](https://www.python.org/downloads/)
  * Send feedback to martinez.dagan@gmail.com
