@@ -6,7 +6,6 @@ from nltk.stem.wordnet import WordNetLemmatizer
 
 # Lists
 punctuation = "\n\t\r`~!@#$%^&*()-_=+[]\\{}|;':\",./<>?"
-JUNK_WORDS = [""]
 DIGITS = list("1234567890")
 COMMON_WORDS = lex.vocabulary.vocab
 
@@ -41,16 +40,23 @@ def get_words(texts, exclude=[]):
 def associate_words(words):
     lexicon = []
     while len(words) != 0:
+        # add word to lexicon and define lemmatized words
         lexicon.append([words[0]])
         vl = WordNetLemmatizer().lemmatize(words[0].lower(), 'v')
         nl = WordNetLemmatizer().lemmatize(words[0].lower(), 'n')
+
+        # fine associated words
         for i in words[1::]:
             vl2 = WordNetLemmatizer().lemmatize(i.lower(), 'v')
             nl2 = WordNetLemmatizer().lemmatize(i.lower(), 'n')
             if i == words[0] or vl2 == vl or nl2 == nl:
                 lexicon[-1].append(i)
+
+        # remove words from original list
         for i in lexicon[-1]:
             words.remove(i)
+
+        # Add root word to lexicon if not there already
         if vl not in lexicon[-1]:
             lexicon[-1].insert(0, vl)
         elif nl not in lexicon[-1]:

@@ -21,7 +21,7 @@ MedLex is a tool designed to take in CSV data and create a lexicon
 * dropbox
 * google-api-python-client
   
-**Installation Instructions:**
+**Setup Instructions:**
 
 * [Download](https://github.com/Property404/MedLex/archive/master.zip) and extract
 * Install all needed packages through [pip](https://pypi.python.org/pypi/pip) if not installed
@@ -34,6 +34,6 @@ MedLex is a tool designed to take in CSV data and create a lexicon
 **Usage Instructions:**  
 
 * For usage help, open doc/Usage Documentation.html
-* For additional help, type 'medlex -h'
+* For additional help, try 'medlex --help'
 * If MedLex won't run properly, try [updating Python](https://www.python.org/downloads/)
  * Send feedback to martinez.dagan@gmail.com

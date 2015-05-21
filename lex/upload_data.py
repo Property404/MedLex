@@ -126,4 +126,4 @@ def upload(src, destination):
     else:
         from shutil import copyfile
         copyfile(src, destination)
-        print("Uploaded "+src+" to local destination")
+        print("File copied "+src+" to local destination")

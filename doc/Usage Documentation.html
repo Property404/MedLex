@@ -2,72 +2,158 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Medlex Usage Documentation</title>
+    <title>MedLex Usage Documentation</title>
     <style>
-        body {font-family: sans-serif;}
+        body {
+        font-family: sans-serif;
+        width:740px;
+        height:400px;
+        overflow-y:auto;
+        }
     </style>
 </head>
 <body>
 <h1>MedLex Usage Documentation</h1>
+<h2>The Project</h2>
+MedLex came out of a project from Florida Polytechnic's Big Data Lab. The task was as follows:
+<ol>
+    <li>Download medical databases from various sites</li>
+    <li>Create lexicons from those databases
+        <ul>
+            <li>Associate equivalent words</li>
+            <li>Remove common/non-medical words</li>
+        </ul>
+    </li>
+    <li>Upload the lexicons to various computers</li>
+</ol>
 
+MedLex has been able to accomplish all of these tasks and more, while keeping the user in control. MedLex works like a
+standard UNIX command line tool, with a set of flags, options, and configuration files for customization. The availability
+of the Python source code and free software license provides for additional customization.
 
 <h2>Downloading Sample Data</h2>
-In order for MedLex to work, the user can download preset sample data with the &quot;<code>d</code>&quot; flag:
+In order for MedLex to work, it must have data. The user can download preset sample data with the "<code>d</code>" flag:
 <p><code>medlex -d</code></p>
 This is a collection of data from various hospitals. You can change the data source later. For now, we'll use this.
 
 
 <h2>Creating a Lexicon</h2>
 <h4>Normal Lexicons</h4>
-Creating a lexicon can be done by using the &quot;<code>r</code>&quot; flag:
+Creating a lexicon can be done by using the "<code>r</code>" flag:
 <p><code>medlex -r lexicon.txt</code></p>
 Where "lexicon.txt" is the name of the output file.
 <h4>Formatted Lexicon</h4>
 Alternatively, one can create a <em>formatted</em>
-lexicon by using the &quot;<code>-f</code>&quot; flag:
+lexicon by using the "<code>-f</code>" flag:
 <p><code>medlex -f lexicon.txt formatted_lexicon.html</code></p>
-Where "lexicon.txt" is the name of a plain-text lexicon we previously created, and "formatted_lexicon.html" is the<br>
+Where "lexicon.txt" is the name of a plain-text lexicon we previously created, and "formatted_lexicon.html" is the
 formatted version we are creating. To create a plain-text lexicon and formatted lexicon at the same time, we do:
 <p><code>medlex -rf lexicon.txt formatted_lexicon.html</code></p>
-Where "lexicon.txt" and "formatted_lexicon.html" are both files we are creating. To <em>only</em> create a formatted lexicon,<br/>
-we can remove the first file name, like so:
+Where "lexicon.txt" and "formatted_lexicon.html" are both files we are creating. To <em>only</em> create a formatted
+lexicon, we can remove the first file name, like so:
 <p><code>medlex -rf formatted_lexicon.html</code></p>
 This will assign the plain-text lexicon to a temp folder, to be deleted.
-<p>As a test feature, MedLex also allows you add definitions to lexicon by using the &quot;<code>F</code>&quot;
-flag instead of the &quot;<code>f</code>&quot; flag:</p>
-<p><code>medlex -rF dictionary.html -title &quot;Medical Dictionary&quot;</code></p>
-The &quot;<code>title</code>&quot; option allows us to alter the title of the output file
+<p>As a test feature, MedLex also allows you add definitions to lexicon by using the "<code>F</code>"
+flag instead of the "<code>f</code>" flag:</p>
+<p><code>medlex -rF dictionary.html -title "Medical Dictionary"</code></p>
+The "<code>title</code>" option allows us to alter the title of the output file
+<h4>Inside Look</h4>
+MedLex uses NLTK (Natural Language Toolkit) to lemmatize words for association. MedLex uses this to check if each other
+word shares the same lemmatized form.
+<p><pre>
+    from nltk.stem.wordnet import WordNetLemmatizer
+    ...
+    def associate_words(words):
+        lexicon = []
+        while len(words) != 0:
+            # add word to lexicon and define lemmatized words
+            lexicon.append([words[0]])
+            # Verb base
+            vl = WordNetLemmatizer().lemmatize(words[0].lower(), 'v')
+            # Noun base
+            nl = WordNetLemmatizer().lemmatize(words[0].lower(), 'n')
+
+            # fine associated words
+            for i in words[1::]:
+                vl2 = WordNetLemmatizer().lemmatize(i.lower(), 'v')
+                nl2 = WordNetLemmatizer().lemmatize(i.lower(), 'n')
+                if i == words[0] or vl2 == vl or nl2 == nl:
+                    lexicon[-1].append(i)
+
+            # remove words from original list
+            for i in lexicon[-1]:
+                words.remove(i)
+
+            # Add root word to lexicon if not there already
+            if vl not in lexicon[-1]:
+                lexicon[-1].insert(0, vl)
+            elif nl not in lexicon[-1]:
+                if nl not in ["ass"]:
+                    lexicon[-1].insert(0, nl)
+        return lexicon
+</pre>
 
 
 <h2>Making a Custom Lexicon</h2>
 <h4>Adding a Data Source</h4>
-A user can add a custom data source using the &quot;<code>src</code>&quot; option:
-<p><code>medlex -r Financial_Lexicon.txt -src &quot;~/financial_data&quot;</code></p>
-However, MedLex will still search through the columns used with the sample data. To fix this, the user can run SortCSV<br>
+A user can add a custom data source using the "<code>src</code>" option:
+<p><code>medlex -r Financial_Lexicon.txt -src "~/financial_data"</code></p>
+However, MedLex will still search through the columns used with the sample data. To fix this, the user can run SortCSV
 to manually("<code>S</code>") or automatically("<code>Z</code>") pick out desired columns:
-<p><code>medlex -Z -src &quot;~/financial_data&quot;<br>
-medlex -rf Financial_lexicon.html -title &quot;Financial Lexicon&quot; -src &quot;~/financial_data&quot;</code>
+<p><code>medlex -Z -src "~/financial_data<br />
+medlex -rf Financial_lexicon.html -title "Financial Lexicon" -src "~/financial_data"</code>
 </p>
 <strong>Note Bene</strong>: the source folder must contain only CSV files
-<h4>Customizing MedLex</h4>
-Medlex can be customized by using the &quot;<code>c</code>&quot; flag:
+<h4>Configuring MedLex</h4>
+MedLex can be configured by using the "<code>c</code>" flag:
 <p><code>medlex -c</code></p>
-This will open the <code>config.py</code> file, which holds the default variables for MedLex
+This will open the <code>config.py</code> file, which holds the default variables for MedLex. Here, you can change the
+"<code>exclude_words</code>" variable to exclude words from your lexicon. You can also change the default data source and lexicon
+title.
 
 <h2>Uploading Files</h2>
-Files can be uploaded to Dropbox, Google Drive, or an FTP server by using the &quot;<code>upload</code>&quot; or &quot;<code>u</code>&quot; options:
-<p><code>medlex -upload lexicon.txt dropbox:lexicon.txt</code><br/>
+Files can be uploaded to Dropbox, Google Drive, or an FTP server by using the "<code>upload</code>" or "<code>u</code>" options:
+<p><code>medlex -upload lexicon.txt dropbox:lexicon.txt</code><br />
 <code>medlex -u lexicon.txt drive.google:lexicon.txt</code><br />
-<code>medlex -u lexicon.txt ftp://127.0.0.1</code></p>
+<code>medlex -u lexicon.txt ftp://example.com</code></p>
 or
-<p><code>medlex -u lexicon.txt dropbox:lexicon.txt;drive.google:lexicon.txt;ftp://127.0.0.1</code></p>
+<p><code>medlex -u lexicon.txt dropbox:lexicon.txt;drive.google:lexicon.txt;ftp://example.com</code></p>
 This can also be done after creating a lexicon:
-<p><code>medlex -r lex.txt -u lex.txt ftp://127.0.0.1/uploaded_lex.txt</code></p>
-
+<p><code>medlex -rf lex.html -u lex.html ftp://example.com/medical_lexicon.html</code></p>
+If the file destination does not begin with <code>drive.google:</code>,<code>dropbox:</code>, or <code>ftp:</code>,
+MedLex will assume your destination to be a local directory, and copy your file to that path
 
 <h2>Additional Help</h2>
 Additional help can be found in the <code>README.md</code> file or through:
 <p><code>medlex --help</code></p>
-MedLex is free software under version 3 of the GNU General Public License
+Which brings up the Help Page:
+<pre>
+MedLex
+
+usage: medlex [option]
+   or: medlex [option] [file]
+   or: medlex [option] [txtfile] [htmlfile]
+
+Options:
+   -r		Make lexicon
+   -d		Download required medical data
+   -f		Format lexicon
+   -F		Format lexicon with dictionary definitions
+   -c		Edit config file
+   -S		Manually sort through source data
+   -Z		Autosort through source data
+   -src &lt;dir&gt;	Use source path
+   -title &lt;str&gt;	Use title in formatted lexicon
+   -u &lt;f&gt; &lt;dir&gt;	Upload file
+   -upload	Same as -u
+   -L &lt;n&gt;	Limit files taken into lexicon
+   -limit	Same as -L
+   --version	Display version number and exit
+   --license	Print license and exit
+   --help	Same as -h
+</pre>
+<br />
+<em>MedLex is free software under version 3 of the GNU General Public License.<br />
+Copyright (c) - 2015 Dagan Martinez</em>
 </body>
 </html>

@@ -3,7 +3,7 @@ import lex.wordify as wordify
 import os
 
 
-def run(filename, searchdir, columns, limit):
+def run(filename, searchdir, columns, limit, excluded_words):
     print("Pulling from "+searchdir+"...")
 
     # Define variables
@@ -23,9 +23,9 @@ def run(filename, searchdir, columns, limit):
 
     # Get words from data
     print("\nGetting words")
-    words = wordify.get_words(stuff, exclude=wordify.JUNK_WORDS+wordify.COMMON_WORDS)
+    words = wordify.get_words(stuff, exclude=list(set([""]+wordify.COMMON_WORDS+excluded_words)))
 
-    # Create lexicon - 75% scrutiny
+    # Create lexicon
     print("Creating lexicon")
     words.sort()
     lexicon = wordify.associate_words(words)
