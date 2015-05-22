@@ -121,7 +121,7 @@ or
 This can also be done after creating a lexicon:
 <p><code>medlex -rf lex.html -u lex.html ftp://example.com/medical_lexicon.html</code></p>
 If the file destination does not begin with <code>drive.google:</code>,<code>dropbox:</code>, or <code>ftp:</code>,
-MedLex will assume your destination to be a local directory, and copy your file to that path
+MedLex will assume the destination to be a local directory, and copy the file to that path
 
 <h2>Additional Help</h2>
 Additional help can be found in the <code>README.md</code> file or through:
@@ -142,15 +142,16 @@ Options:
    -c		Edit config file
    -S		Manually sort through source data
    -Z		Autosort through source data
-   -src &lt;dir&gt;	Use source path
-   -title &lt;str&gt;	Use title in formatted lexicon
+   -src &lt;dir&gt;	Set source path
+   -title &lt;str&gt;	Set title in formatted lexicon
    -u &lt;f&gt; &lt;dir&gt;	Upload file
    -upload	Same as -u
    -L &lt;n&gt;	Limit files taken into lexicon
    -limit	Same as -L
-   --version	Display version number and exit
+   --reset	Reset config
+   --version	Print version number and exit
    --license	Print license and exit
-   --help	Same as -h
+   --help	Print Help (this message) and exit
 </pre>
 <br />
 <em>MedLex is free software under version 3 of the GNU General Public License.<br />

@@ -22,8 +22,8 @@ Options:
    -c\t\tEdit config file
    -S\t\tManually sort through source data
    -Z\t\tAutosort through source data
-   -src <dir>\tUse source path
-   -title <str>\tUse title in formatted lexicon
+   -src <dir>\tSet source path
+   -title <str>\tSet title in formatted lexicon
    -u <f> <dir>\tUpload file
    -upload\tSame as -u
    -L <n>\tLimit files taken into lexicon
