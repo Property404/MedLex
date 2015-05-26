@@ -6,7 +6,7 @@ import tempfile
 
 
 # CONSTANTS
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 
 HELP_PAGE = """MedLex
 

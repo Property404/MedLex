@@ -15,7 +15,7 @@
 <body>
 <h1>MedLex Usage Documentation</h1>
 <h2>The Project</h2>
-MedLex came out of a project from Florida Polytechnic's Big Data Lab. The task was as follows:
+MedLex is a project from Florida Polytechnic's Big Data Lab. The original task was as follows:
 <ol>
     <li>Download medical databases from various sites</li>
     <li>Create lexicons from those databases
@@ -27,9 +27,9 @@ MedLex came out of a project from Florida Polytechnic's Big Data Lab. The task w
     <li>Upload the lexicons to various computers</li>
 </ol>
 
-MedLex has been able to accomplish all of these tasks and more, while keeping the user in control. MedLex works like a
-standard UNIX command line tool, with a set of flags, options, and configuration files for customization. The availability
-of the Python source code and free software license provides for additional customization.
+MedLex has not only accomplished these tasks, but is able to do so with flexibility, with the ability to create custom
+lexicons for any discipline. MedLex works like a standard UNIX command line tool, giving the user maximum control over
+the lexicon creation process.
 
 <h2>Downloading Sample Data</h2>
 In order for MedLex to work, it must have data. The user can download preset sample data with the "<code>d</code>" flag:
@@ -42,21 +42,6 @@ This is a collection of data from various hospitals. You can change the data sou
 Creating a lexicon can be done by using the "<code>r</code>" flag:
 <p><code>medlex -r lexicon.txt</code></p>
 Where "lexicon.txt" is the name of the output file.
-<h4>Formatted Lexicon</h4>
-Alternatively, one can create a <em>formatted</em>
-lexicon by using the "<code>-f</code>" flag:
-<p><code>medlex -f lexicon.txt formatted_lexicon.html</code></p>
-Where "lexicon.txt" is the name of a plain-text lexicon we previously created, and "formatted_lexicon.html" is the
-formatted version we are creating. To create a plain-text lexicon and formatted lexicon at the same time, we do:
-<p><code>medlex -rf lexicon.txt formatted_lexicon.html</code></p>
-Where "lexicon.txt" and "formatted_lexicon.html" are both files we are creating. To <em>only</em> create a formatted
-lexicon, we can remove the first file name, like so:
-<p><code>medlex -rf formatted_lexicon.html</code></p>
-This will assign the plain-text lexicon to a temp folder, to be deleted.
-<p>As a test feature, MedLex also allows you add definitions to lexicon by using the "<code>F</code>"
-flag instead of the "<code>f</code>" flag:</p>
-<p><code>medlex -rF dictionary.html -title "Medical Dictionary"</code></p>
-The "<code>title</code>" option allows us to alter the title of the output file
 <h4>Inside Look</h4>
 MedLex uses NLTK (Natural Language Toolkit) to lemmatize words for association. MedLex uses this to check if each other
 word shares the same lemmatized form.
@@ -92,6 +77,22 @@ word shares the same lemmatized form.
                     lexicon[-1].insert(0, nl)
         return lexicon
 </pre>
+<h4>Formatted Lexicon</h4>
+Alternatively, one can create a <em>formatted</em>
+lexicon by using the "<code>-f</code>" flag:
+<p><code>medlex -f lexicon.txt formatted_lexicon.html</code></p>
+Where "lexicon.txt" is the name of a plain-text lexicon we previously created, and "formatted_lexicon.html" is the
+formatted version we are creating. To create a plain-text lexicon and formatted lexicon at the same time, we do:
+<p><code>medlex -rf lexicon.txt formatted_lexicon.html</code></p>
+Where "lexicon.txt" and "formatted_lexicon.html" are both files we are creating. To <em>only</em> create a formatted
+lexicon, we can remove the first file name, like so:
+<p><code>medlex -rf formatted_lexicon.html</code></p>
+This will assign the plain-text lexicon to a temp folder, to be deleted.
+<p>As a test feature, MedLex also allows you add definitions to lexicon by using the "<code>F</code>"
+flag instead of the "<code>f</code>" flag:</p>
+<p><code>medlex -rF dictionary.html -title "Medical Dictionary"</code></p>
+The "<code>title</code>" option allows us to alter the title of the output file
+
 
 
 <h2>Making a Custom Lexicon</h2>
@@ -108,11 +109,12 @@ medlex -rf Financial_lexicon.html -title "Financial Lexicon" -src "~/financial_d
 MedLex can be configured by using the "<code>c</code>" flag:
 <p><code>medlex -c</code></p>
 This will open the <code>config.py</code> file, which holds the default variables for MedLex. Here, you can change the
-"<code>exclude_words</code>" variable to exclude words from your lexicon. You can also change the default data source and lexicon
-title.
+"<code>exclude_words</code>" variable to exclude words from your lexicon. You can also change the default data source
+and lexicon title.
 
 <h2>Uploading Files</h2>
-Files can be uploaded to Dropbox, Google Drive, or an FTP server by using the "<code>upload</code>" or "<code>u</code>" options:
+Files can be uploaded to Dropbox, Google Drive, or an FTP server by using the "<code>upload</code>" or "<code>u</code>"
+options:
 <p><code>medlex -upload lexicon.txt dropbox:lexicon.txt</code><br />
 <code>medlex -u lexicon.txt drive.google:lexicon.txt</code><br />
 <code>medlex -u lexicon.txt ftp://example.com</code></p>

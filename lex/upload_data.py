@@ -76,6 +76,7 @@ def upload_to_drive(filename, new_filename, app_key=DRIVE_APP_KEY, app_secret=DR
 def upload_by_ftp(src, destination):
     from os.path import basename
     import ftplib
+    import getpass
 
     # Get information from destination string
     while destination[0] == '/':
@@ -96,14 +97,14 @@ def upload_by_ftp(src, destination):
 
     # Start FTP session
     try:
-        session = ftplib.FTP(ftp_base, input("Username>"), input("Password>"))
+        session = ftplib.FTP(ftp_base, input("Username>"), getpass.getpass("Password>"))
         session.cwd(ftp_path)
         srcfile = open(src, "rb")
         session.storbinary("STOR "+ftp_filename, srcfile)
     except ftplib.error_perm as e:
         print("File transfer failed: "+e.args[0])
         return False
-    except (FileNotFoundError, PermissionError) as e:
+    except (OSError, IOError) as e:
         print("File transfer failed(client): "+e.args[1])
         return False
     srcfile.close()
