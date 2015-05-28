@@ -28,7 +28,7 @@ MedLex is a project from Florida Polytechnic's Big Data Lab. The original task w
 </ol>
 
 MedLex has not only accomplished these tasks, but is able to do so with flexibility, with the ability to create custom
-lexicons for any discipline. MedLex works like a standard UNIX command line tool, giving the user maximum control over
+lexicons for any discipline. MedLex works like a standard UNIX command line tool, giving the user control over
 the lexicon creation process.
 
 <h2>Downloading Sample Data</h2>
@@ -88,7 +88,7 @@ Where "lexicon.txt" and "formatted_lexicon.html" are both files we are creating.
 lexicon, we can remove the first file name, like so:
 <p><code>medlex -rf formatted_lexicon.html</code></p>
 This will assign the plain-text lexicon to a temp folder, to be deleted.
-<p>As a test feature, MedLex also allows you add definitions to lexicon by using the "<code>F</code>"
+<p>As a test feature, MedLex also allows you add definitions to a formatted lexicon by using the "<code>F</code>"
 flag instead of the "<code>f</code>" flag:</p>
 <p><code>medlex -rF dictionary.html -title "Medical Dictionary"</code></p>
 The "<code>title</code>" option allows us to alter the title of the output file
@@ -98,11 +98,11 @@ The "<code>title</code>" option allows us to alter the title of the output file
 <h2>Making a Custom Lexicon</h2>
 <h4>Adding a Data Source</h4>
 A user can add a custom data source using the "<code>src</code>" option:
-<p><code>medlex -r Financial_Lexicon.txt -src "~/financial_data"</code></p>
+<p><code>medlex -r financial_lexicon.txt -src "~/financial_data"</code></p>
 However, MedLex will still search through the columns used with the sample data. To fix this, the user can run SortCSV
 to manually("<code>S</code>") or automatically("<code>Z</code>") pick out desired columns:
 <p><code>medlex -Z -src "~/financial_data<br />
-medlex -rf Financial_lexicon.html -title "Financial Lexicon" -src "~/financial_data"</code>
+medlex -rf financial_lexicon.html -title "Financial Lexicon" -src "~/financial_data"</code>
 </p>
 <strong>Note Bene</strong>: the source folder must contain only CSV files
 <h4>Configuring MedLex</h4>

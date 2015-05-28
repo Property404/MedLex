@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # Copyright (c) - 2015 Dagan Martinez
 import os
-import shutil
 import tempfile
 
 
@@ -98,7 +97,8 @@ for i in range(len(os.sys.argv)):
         exit()
     if os.sys.argv[i] == '--reset':
         os.remove(SETTINGS_LOCATION)
-        os.remove(SETTINGS_LOCATION+"c")
+        if os.sys.version_info[0] < 3:
+            os.remove(SETTINGS_LOCATION+"c")
         print("Config.py reset")
         open(SETTINGS_LOCATION, "w").write(DEFAULT_SETTINGS)
         continue
@@ -265,4 +265,6 @@ if upload_queue is not []:
         for path in destinations:
             upload(upload_data[0], path)
 
+# Clean up
+import shutil
 shutil.rmtree(temp_folder)
