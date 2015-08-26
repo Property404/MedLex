@@ -6,7 +6,6 @@ from nltk.stem.wordnet import WordNetLemmatizer
 
 # Lists
 punctuation = "\n\t\r`~!@#$%^&*()-_=+[]\\{}|;':\",./<>?"
-DIGITS = list("1234567890")
 COMMON_WORDS = lex.vocabulary.vocab
 
 
@@ -25,8 +24,7 @@ def get_words(texts, exclude=[]):
     while tempstring != tempstring.replace("  ", " "):
         tempstring = tempstring.replace("  ", " ")
 
-    # Remove duplicates and excluded items
-    # Make list of words
+    # Remove duplicates and excluded items to make wordlist
     tempwords = list(set(tempstring.split(" ")))
     exclude = list(set(exclude))
     words = []
